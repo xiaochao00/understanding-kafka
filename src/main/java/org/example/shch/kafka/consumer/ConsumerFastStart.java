@@ -4,7 +4,10 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -18,6 +21,7 @@ import java.util.Properties;
  * 2021/3/26 0:16
  */
 public class ConsumerFastStart {
+    private static final Logger logger = LoggerFactory.getLogger(ConsumerFastStart.class);
     private static final String BROKERS = "localhost:9092";
     private static final String TOPIC = "topic-demo";
     private static final String TOPIC_GROUP = "group.demo";
@@ -28,18 +32,28 @@ public class ConsumerFastStart {
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, TOPIC_GROUP);
+        properties.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, 2000);
+        properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 2);
+//        properties.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 1000);
         return properties;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+        TopicPartition partition = new TopicPartition(TOPIC, 0);
         Properties prop = initConfig();
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(prop);
         consumer.subscribe(Collections.singleton(TOPIC));
+        logger.info("Begin consumer..");
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+            logger.info("Poll record count:{}.", records.count());
             for (ConsumerRecord<String, String> record : records) {
-                System.out.println(record.value());
+                logger.info("poll record offset:{},value:{}", record.offset(), record.value());
+                Thread.sleep(10000);
+                // throw new IllegalArgumentException("here exception");
             }
+            long offset = consumer.position(partition);
+            logger.info("Current offset:{}", offset);
         }
     }
 }

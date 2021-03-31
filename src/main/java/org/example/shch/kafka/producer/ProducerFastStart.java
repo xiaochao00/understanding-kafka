@@ -29,8 +29,13 @@ public class ProducerFastStart {
     public static void main(String[] args) {
         Properties prop = intiConfig();
         KafkaProducer<String, String> producer = new KafkaProducer<>(prop);
-        ProducerRecord<String, String> record = new ProducerRecord<>(TOPIC, "hello kafka!");
-        producer.send(record);
+        for (int i = 0; i < 10; i++) {
+            ProducerRecord<String, String> record = new ProducerRecord<>(TOPIC, "hello kafka! num:" + i);
+
+            producer.send(record);
+//            Thread.sleep(2000);
+        }
+
         producer.close();
     }
 }
