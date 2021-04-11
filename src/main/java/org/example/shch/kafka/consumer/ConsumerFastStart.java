@@ -10,8 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * kafka consumer
@@ -34,6 +33,7 @@ public class ConsumerFastStart {
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, TOPIC_GROUP);
         properties.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, 2000);
         properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 2);
+//        properties.put(ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG,)
 //        properties.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 1000);
         return properties;
     }
