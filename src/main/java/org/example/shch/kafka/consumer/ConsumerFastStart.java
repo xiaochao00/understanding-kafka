@@ -35,6 +35,7 @@ public class ConsumerFastStart {
         properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 2);
 //        properties.put(ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG,)
 //        properties.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 1000);
+        properties.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, RandomAssignor.class.getName());
         return properties;
     }
 
